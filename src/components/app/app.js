@@ -5,51 +5,80 @@ import SearchPanel from '../search-panel';
 import TodoList from '../todo-list';
 import ItemStatusFilter from '../item-status-filter';
 import './app.css';
+import ItemAddForm from '../item-add-form';
 
 export default class App extends Component {
 
-  state = {
-	todoData: [
-	  { label: 'Drink Coffee!', important: false, id: 1 },
-	  { label: 'Make Awesome App', important: true, id: 2 },
-	  { label: 'Have a lunch', important: false, id: 3 }
-	]
-  }
+	maxId = 100;
 
-  deleteItem = (id) => {
-	this.setState(( { todoData } ) => {
-		const idx = todoData.findIndex((el) => el.id === id );
+	state = {
+		todoData: [
+		{ label: 'Drink Coffee!', important: false, id: 1 },
+		{ label: 'Make Awesome App', important: true, id: 2 },
+		{ label: 'Have a lunch', important: false, id: 3 }
+		]
+	}
 
-		// [a, b, c, d, e]
-		// [a, b,  , d, e]
+	deleteItem = (id) => {
+		this.setState(( { todoData } ) => {
+			const idx = todoData.findIndex((el) => el.id === id );
 
-		// const before = todoData.slice(0, idx);
-		// const after = todoData.slice(idx + 1);
+			// [a, b, c, d, e]
+			// [a, b,  , d, e]
 
-		const newArray = [
-			...todoData.slice(0, idx),
-			...todoData.slice(idx + 1)
-		];
-		  
-		return {
-			todoData: newArray
+			// const before = todoData.slice(0, idx);
+			// const after = todoData.slice(idx + 1);
+
+			const newArray = [
+				...todoData.slice(0, idx),
+				...todoData.slice(idx + 1)
+			];
+			
+			return {
+				todoData: newArray
+			}
+		})
+	};
+
+	addItem = (text) => {
+		// generate id ?
+		const newItem = {
+			label: text,
+			important: false,
+			id: this.maxId++
 		}
-	})
-  };
 
-  render() {
-	return (
-	  <div className="todo-app">
-		<AppHeader toDo={1} done={3} />
-		<div className="top-panel d-flex">
-		  <SearchPanel />
-		  <ItemStatusFilter />
+		// add element in array ?
+		this.setState(({ todoData }) => {
+
+			const newArr = [
+				...todoData,
+				newItem
+			]
+
+			return {
+				todoData: newArr
+			}
+		});
+
+		console.log(`added: ${text}`);
+	};
+
+	render() {
+		return (
+		<div className="todo-app">
+				<AppHeader toDo={1} done={3} />
+			<div className="top-panel d-flex">
+				<SearchPanel />
+				<ItemStatusFilter />
+			</div>
+	
+			<TodoList 
+				todos={ this.state.todoData }
+				onDeleted={ this.deleteItem } />
+			<ItemAddForm 
+				onItemAdded={ this.addItem } />
 		</div>
-  
-		<TodoList 
-		  todos={ this.state.todoData }
-		  onDeleted={ this.deleteItem } />
-	  </div>
-	);
-  }
+		);
+	}
 };
