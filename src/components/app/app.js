@@ -79,7 +79,7 @@ export default class App extends Component {
 			newItem,
 			...arr.slice(idx + 1)
 		];
-}
+	}
 
 	onToggleDone = (id) => {
 		this.setState(({ todoData }) => {
